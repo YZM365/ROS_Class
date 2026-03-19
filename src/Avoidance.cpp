@@ -3,6 +3,7 @@
 #include <nav_msgs/Odometry.h>
 #include <tf/tf.h>
 #include <cmath>
+#include <std_msgs/Int16MultiArray.h>
 
 double now_x = 0.0;
 double now_y = 0.0;
