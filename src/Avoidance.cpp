@@ -4,11 +4,14 @@
 #include <tf/tf.h>
 #include <cmath>
 #include <std_msgs/Int16MultiArray.h>
+#include <sensor_msgs/Range.h>
 
 double now_x = 0.0;
 double now_y = 0.0;
 double now_yaw = 0.0;
 int dir = 0;
+int dis = 0;
+
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
 	now_x = msg->pose.pose.position.x;
@@ -35,6 +38,24 @@ void bumpCallback(const std_msgs::Int16MultiArray::ConstPtr& msg){
 		}
 
 }
+void TofCallback_1(const sensor_msgs::Range::ConstPtr& msg){
+	dis = 0;
+	ROS_INFO("Distance: %f by left Tof",msg->range);
+	if (msg->range <= 0.2){dis = 1;}
+	return;
+}
+void TofCallback_2(const sensor_msgs::Range::ConstPtr& msg){
+	dis = 0;
+	ROS_INFO("Distance: %f by middle Tof",msg->range);
+	if (msg->range <= 0.2){dis = 2;}
+	return;
+}
+void TofCallback_3(const sensor_msgs::Range::ConstPtr& msg){
+	dis = 0;
+	ROS_INFO("Distance: %f by right Tof",msg->range);
+	if (msg->range <= 0.2){dis = 3;}
+	return;
+}
 		
 int main(int argc,char **argv)
 {
@@ -44,6 +65,9 @@ int main(int argc,char **argv)
 	ros::Publisher cmd_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel",10);//send Handler
 	ros::Subscriber odom_sub = nh.subscribe("/odom",10,odomCallback);
 	ros::Subscriber bump_sub = nh.subscribe("/robot/bump_sensor",10,bumpCallback);
+	ros::Subscriber Tof_pub1 = nh.subscribe("/ul/senser1",10,TofCallback_1);
+	ros::Subscriber Tof_pub2 = nh.subscribe("/ul/senser2",10,TofCallback_2);
+	ros::Subscriber Tof_pub3 = nh.subscribe("/ul/senser3",10,TofCallback_3);
 	ros::Rate rate(10); //T
 	ROS_INFO("SYS START:waiting for data");
 	while (ros::ok() && now_yaw == 0.0){
@@ -57,7 +81,7 @@ int main(int argc,char **argv)
 	double angle = M_PI;    //target angle settings(180)
 	geometry_msgs::Twist stop;
 	
-	while (ros::ok() and not dir){  //no obstacles
+	while (ros::ok() and not dir and not dis){  //no obstacles
 		geometry_msgs::Twist move;
 		ROS_INFO("Moving...");
 		move.linear.x = forward_speed;
@@ -65,7 +89,7 @@ int main(int argc,char **argv)
 		ros::Duration(0.5).sleep();
 		ros::spinOnce();
 		
-		if (dir){     //coming with obstacles
+		if (dir or dis){     //coming with obstacles
 			ROS_INFO("avoiding crash from dir %d: Turning...",dir);
 			cmd_pub.publish(stop);
 			ros::Duration(0.2).sleep();
