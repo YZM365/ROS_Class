@@ -13,7 +13,14 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  dynamic_reconfigure
 )
+
+generate_dynamic_reconfigure_options(
+  cfg/Tutorials.cfg
+)
+
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -212,8 +219,15 @@ add_executable(publisher_node src/publisher.cpp)
 add_executable(subscriber_node src/subscriber.cpp)
 add_executable(square_node src/move_forward.cpp)
 add_executable(avoid_node src/Avoidance.cpp)
+add_executable(my_param_node src/class3.cpp)
+add_executable(dynamic_reconfigure_node src/dynamic_reconfigure.cpp)
+add_dependencies(dynamic_reconfigure_node ${PROJECT_NAME}_gencfg)
+add_executable(ros_log src/ros_log.cpp)
 target_link_libraries(hello_node ${catkin_LIBRARIES})
 target_link_libraries(publisher_node ${catkin_LIBRARIES})
 target_link_libraries(subscriber_node ${catkin_LIBRARIES})
 target_link_libraries(square_node ${catkin_LIBRARIES})
+target_link_libraries(dynamic_reconfigure_node ${catkin_LIBRARIES})
 target_link_libraries(avoid_node ${catkin_LIBRARIES})
+target_link_libraries(ros_log ${catkin_LIBRARIES})
+target_link_libraries(my_param_node ${catkin_LIBRARIES})
