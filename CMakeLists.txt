@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   dynamic_reconfigure
+  tf2_ros
+  upros_message
 )
 
 generate_dynamic_reconfigure_options(
@@ -114,7 +116,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES my_class_pkg
-#  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs
+#  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs upros_message
 #  DEPENDS system_lib
 )
 
@@ -223,6 +225,7 @@ add_executable(my_param_node src/class3.cpp)
 add_executable(dynamic_reconfigure_node src/dynamic_reconfigure.cpp)
 add_dependencies(dynamic_reconfigure_node ${PROJECT_NAME}_gencfg)
 add_executable(ros_log src/ros_log.cpp)
+add_executable(tag_grab_node src/tag_grab.cpp)
 target_link_libraries(hello_node ${catkin_LIBRARIES})
 target_link_libraries(publisher_node ${catkin_LIBRARIES})
 target_link_libraries(subscriber_node ${catkin_LIBRARIES})
@@ -231,3 +234,5 @@ target_link_libraries(dynamic_reconfigure_node ${catkin_LIBRARIES})
 target_link_libraries(avoid_node ${catkin_LIBRARIES})
 target_link_libraries(ros_log ${catkin_LIBRARIES})
 target_link_libraries(my_param_node ${catkin_LIBRARIES})
+target_link_libraries(tag_grab_node ${catkin_LIBRARIES})
+
