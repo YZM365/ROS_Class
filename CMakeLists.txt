@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   tf2_ros
   upros_message
+  move_base_msgs
 )
 
 generate_dynamic_reconfigure_options(
@@ -230,6 +231,7 @@ add_executable(ros_imu_node src/ros_imu.cpp)
 add_executable(ros_imu_rotate_node src/imu_rotate.cpp)
 add_executable(ros_scan_node src/ros_scan.cpp)
 add_executable(ros_avoid_node src/ros_avoid.cpp)
+add_executable(movebase_client_node src/movebase_client.cpp)
 target_link_libraries(hello_node ${catkin_LIBRARIES})
 target_link_libraries(publisher_node ${catkin_LIBRARIES})
 target_link_libraries(subscriber_node ${catkin_LIBRARIES})
@@ -243,3 +245,4 @@ target_link_libraries(ros_imu_node ${catkin_LIBRARIES})
 target_link_libraries(ros_imu_rotate_node ${catkin_LIBRARIES})
 target_link_libraries(ros_scan_node ${catkin_LIBRARIES})
 target_link_libraries(ros_avoid_node ${catkin_LIBRARIES})
+target_link_libraries(movebase_client_node ${catkin_LIBRARIES})

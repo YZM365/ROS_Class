@@ -1,6 +1,10 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 
+#include <ros/ros.h>
+#include <sensor_msgs/LaserScan.h>
+#include <cmath>  // 用于M_PI（标准π值）
+
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr &scan) {
     // 获取激光点的个数
     int num_points = (scan->angle_max - scan->angle_min) / scan->angle_increment;
@@ -26,6 +30,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr &scan) {
     float right_range = scan->ranges[num_points / 4 * 3];
     ROS_INFO_STREAM("Right range: " << right_range );
 }
+
 
 int main(int argc, char **argv) {
     // 初始化ROS节点
