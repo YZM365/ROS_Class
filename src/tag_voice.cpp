@@ -18,13 +18,24 @@ void tagCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr& msg)
             {
                 // 语音播报
                 std_msgs::String voice_msg;
-                voice_msg.data = "已找到目标一";
+                voice_msg.data = "已找到目标";
                 voice_pub.publish(voice_msg);
 
-                ROS_INFO("检测到 AprilTag1，已播报");
+                ROS_INFO("AprilTag1 founded.");
                 spoken_flag = true;
                 return;
             }
+            else
+            {
+            	std_msgs::String voice_msg;
+            	voice_msg.data = "未找到目标";
+            	voice_pub.publish(voice_msg);
+            	
+            	ROS_INFO("AprilTag1 NOT founded.");
+            	spoken_flag = true;
+            	return;
+            }
+            	
         }
     }
 }
