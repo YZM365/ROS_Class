@@ -3,41 +3,49 @@
 #include <apriltag_ros/AprilTagDetectionArray.h>
 
 ros::Publisher voice_pub;
-bool spoken_flag = false; // 只播报一次
+// 触发开关：false=允许触发一次检测，true=锁死不操作
+bool spoken_flag = false; 
 
 // 视觉检测回调
 void tagCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr& msg)
 {
-    // 遍历所有检测到的标签
+    // 核心：只有flag为false时，才执行单次检测（锁死时直接退出）
+    if (spoken_flag)
+    {
+        return;
+    }
+
+    // 步骤1：先假设【未找到】，遍历所有标签查找ID=1
+    bool find_target = false;
     for (auto& detection : msg->detections)
     {
         for (int id : detection.id)
         {
-            // 只识别①号码：ID=1
-            if (id == 1 && !spoken_flag)
+            if (id == 1)
             {
-                // 语音播报
-                std_msgs::String voice_msg;
-                voice_msg.data = "已找到目标";
-                voice_pub.publish(voice_msg);
-
-                ROS_INFO("AprilTag1 founded.");
-                spoken_flag = true;
-                return;
+                find_target = true;  // 找到目标，标记为true
+                break;  // 找到就不用继续查了
             }
-            else
-            {
-            	std_msgs::String voice_msg;
-            	voice_msg.data = "未找到目标";
-            	voice_pub.publish(voice_msg);
-            	
-            	ROS_INFO("AprilTag1 NOT founded.");
-            	spoken_flag = true;
-            	return;
-            }
-            	
         }
+        if (find_target) break;
     }
+
+    // 步骤2：根据查找结果播报语音
+    std_msgs::String voice_msg;
+    if (find_target)
+    {
+        voice_msg.data = "已找到目标";
+        ROS_INFO("AprilTag1 founded.");
+    }
+    else
+    {
+        voice_msg.data = "未找到目标";
+        ROS_INFO("AprilTag1 NOT founded.");
+    }
+    voice_pub.publish(voice_msg);
+
+    // 步骤3：关键！无论找到没找到，都把flag置true（单次触发完成）
+    spoken_flag = true;
 }
 
 int main(int argc, char** argv)
@@ -45,9 +53,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "tag_voice_node");
     ros::NodeHandle nh;
 
-    // 语音发布
     voice_pub = nh.advertise<std_msgs::String>("/talk", 10);
-    // 订阅AprilTag
     ros::Subscriber tag_sub = nh.subscribe("/tag_detections", 10, tagCallback);
 
     ros::spin();
