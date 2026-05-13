@@ -1,0 +1,18 @@
+<launch>
+  <!-- ===================== 一次性启动所有功能 ===================== -->
+  <!-- 1. 启动底盘/硬件 bringup -->
+  <include file="$(find upros_bringup)/launch/bringup_w2a.launch" />
+
+  <!-- 2. 启动语音合成（文字转语音） -->
+  <include file="$(find upros_chat)/launch/word_to_speech.launch" />
+
+  <!-- 3. 启动 AprilTag 视觉识别 -->
+  <include file="$(find upros_arm)/launch/recognize_apriltag.launch" />
+
+  <!-- 4. 启动导航核心功能 -->
+  <include file="$(find upros_navigation)/launch/navigation.launch" />
+
+  <!-- 5. 启动导航可视化（RViz） -->
+  <include file="$(find upros_navigation)/launch/view_nav.launch" />
+
+</launch>
